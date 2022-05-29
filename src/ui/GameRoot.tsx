@@ -87,6 +87,7 @@ import { BypassWrapper } from "./React/BypassWrapper";
 import _wrap from "lodash/wrap";
 import _functions from "lodash/functions";
 import { Apr1 } from "./Apr1";
+import { AuxiliaryPage } from "./AuxiliaryPage";
 
 const htmlLocation = location;
 
@@ -105,7 +106,8 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       display: "block",
       padding: "8px",
-      minHeight: "100vh",
+      height: "100vh",
+      overflow: "scroll",
       boxSizing: "border-box",
     },
   }),
@@ -152,6 +154,43 @@ export let Router: IRouter = {
   toImportSave: uninitialized,
 };
 
+export let AuxiliaryRouter: IRouter = {
+  isInitialized: false,
+  page: uninitialized,
+  allowRouting: uninitialized,
+  toActiveScripts: uninitialized,
+  toAugmentations: uninitialized,
+  toBitVerse: uninitialized,
+  toBladeburner: uninitialized,
+  toStats: uninitialized,
+  toCity: uninitialized,
+  toCorporation: uninitialized,
+  toCreateProgram: uninitialized,
+  toDevMenu: uninitialized,
+  toFaction: uninitialized,
+  toFactions: uninitialized,
+  toGameOptions: uninitialized,
+  toGang: uninitialized,
+  toHacknetNodes: uninitialized,
+  toInfiltration: uninitialized,
+  toJob: uninitialized,
+  toMilestones: uninitialized,
+  toGrafting: uninitialized,
+  toScriptEditor: uninitialized,
+  toSleeves: uninitialized,
+  toStockMarket: uninitialized,
+  toTerminal: uninitialized,
+  toTravel: uninitialized,
+  toTutorial: uninitialized,
+  toWork: uninitialized,
+  toBladeburnerCinematic: uninitialized,
+  toLocation: uninitialized,
+  toStaneksGift: uninitialized,
+  toAchievements: uninitialized,
+  toThemeBrowser: uninitialized,
+  toImportSave: uninitialized,
+};
+
 function determineStartPage(player: IPlayer): Page {
   if (RecoveryMode) return Page.Recovery;
   if (player.isWorking) return Page.Work;
@@ -162,6 +201,7 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
   const classes = useStyles();
   const [{ files, vim }, setEditorOptions] = useState({ files: {}, vim: false });
   const [page, setPage] = useState(determineStartPage(player));
+  const [secondaryPage, setSecondaryPage] = useState(Page.SplitScreen);
   const setRerender = useState(0)[1];
   const [augPage, setAugPage] = useState<boolean>(false);
   const [faction, setFaction] = useState<Faction>(
@@ -285,6 +325,85 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
     },
   };
 
+  AuxiliaryRouter = {
+    isInitialized: true,
+    page: () => page,
+    allowRouting: (value: boolean) => setAllowRoutingCalls(value),
+    toActiveScripts: () => setSecondaryPage(Page.ActiveScripts),
+    toAugmentations: () => setSecondaryPage(Page.Augmentations),
+    toBladeburner: () => setSecondaryPage(Page.Bladeburner),
+    toStats: () => setSecondaryPage(Page.Stats),
+    toCorporation: () => setSecondaryPage(Page.Corporation),
+    toCreateProgram: () => setSecondaryPage(Page.CreateProgram),
+    toDevMenu: () => setSecondaryPage(Page.DevMenu),
+    toFaction: (faction: Faction, augPage = false) => {
+      setAugPage(augPage);
+      setSecondaryPage(Page.Faction);
+      if (faction) setFaction(faction);
+    },
+    toFactions: () => setSecondaryPage(Page.Factions),
+    toGameOptions: () => setSecondaryPage(Page.Options),
+    toGang: () => setSecondaryPage(Page.Gang),
+    toHacknetNodes: () => setSecondaryPage(Page.Hacknet),
+    toMilestones: () => setSecondaryPage(Page.Milestones),
+    toGrafting: () => setSecondaryPage(Page.Grafting),
+    toScriptEditor: (files: Record<string, string>, options?: ScriptEditorRouteOptions) => {
+      setEditorOptions({
+        files,
+        vim: !!options?.vim,
+      });
+      setSecondaryPage(Page.ScriptEditor);
+    },
+    toSleeves: () => setSecondaryPage(Page.Sleeves),
+    toStockMarket: () => setSecondaryPage(Page.StockMarket),
+    toTerminal: () => setSecondaryPage(Page.Terminal),
+    toTutorial: () => setSecondaryPage(Page.Tutorial),
+    toJob: () => {
+      setLocation(Locations[player.companyName]);
+      setSecondaryPage(Page.Job);
+    },
+    toCity: () => {
+      setSecondaryPage(Page.City);
+    },
+    toTravel: () => {
+      player.gotoLocation(LocationName.TravelAgency);
+      setSecondaryPage(Page.Travel);
+    },
+    toBitVerse: (flume: boolean, quick: boolean) => {
+      setFlume(flume);
+      setQuick(quick);
+      calculateAchievements();
+      setSecondaryPage(Page.BitVerse);
+    },
+    toInfiltration: (location: Location) => {
+      setLocation(location);
+      setSecondaryPage(Page.Infiltration);
+    },
+    toWork: () => setSecondaryPage(Page.Work),
+    toBladeburnerCinematic: () => {
+      setSecondaryPage(Page.BladeburnerCinematic);
+      setCinematicText(cinematicText);
+    },
+    toLocation: (location: Location) => {
+      setLocation(location);
+      setSecondaryPage(Page.Location);
+    },
+    toStaneksGift: () => {
+      setSecondaryPage(Page.StaneksGift);
+    },
+    toAchievements: () => {
+      setSecondaryPage(Page.Achievements);
+    },
+    toThemeBrowser: () => {
+      setSecondaryPage(Page.ThemeBrowser);
+    },
+    toImportSave: (base64save: string, automatic = false) => {
+      setImportString(base64save);
+      setImportAutomatic(automatic);
+      setSecondaryPage(Page.ImportSave);
+    },
+  };
+
   useEffect(() => {
     // Wrap Router navigate functions to be able to disable the execution
     _functions(Router)
@@ -316,6 +435,8 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
   }
 
   let mainPage = <Typography>Cannot load</Typography>;
+  let auxiliaryPage = <Typography>Cannot load</Typography>;
+  let withSecondaryPage = true;
   let withSidebar = true;
   let withPopups = true;
   let bypassGame = false;
@@ -323,6 +444,7 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
     case Page.Recovery: {
       mainPage = <RecoveryRoot router={Router} softReset={softReset} />;
       withSidebar = false;
+      withSecondaryPage = false;
       withPopups = false;
       bypassGame = true;
       break;
@@ -330,24 +452,28 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
     case Page.BitVerse: {
       mainPage = <BitverseRoot flume={flume} enter={enterBitNode} quick={quick} />;
       withSidebar = false;
+      withSecondaryPage = false;
       withPopups = false;
       break;
     }
     case Page.Infiltration: {
       mainPage = <InfiltrationRoot location={location} />;
       withSidebar = false;
+      withSecondaryPage = false;
       withPopups = false;
       break;
     }
     case Page.BladeburnerCinematic: {
       mainPage = <BladeburnerCinematic />;
       withSidebar = false;
+      withSecondaryPage = false;
       withPopups = false;
       break;
     }
     case Page.Work: {
       mainPage = <WorkInProgressRoot />;
       withSidebar = false;
+      withSecondaryPage = false;
       break;
     }
     case Page.Terminal: {
@@ -512,6 +638,117 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
     }
   }
 
+  switch (secondaryPage) {
+    case Page.Stats: {
+      auxiliaryPage = <CharacterStats />;
+      break;
+    }
+    case Page.ScriptEditor: {
+      auxiliaryPage = (
+        <ScriptEditorRoot
+          files={files}
+          hostname={player.getCurrentServer().hostname}
+          player={player}
+          router={Router}
+          vim={vim}
+        />
+      );
+      break;
+    }
+    case Page.ActiveScripts: {
+      auxiliaryPage = <ActiveScriptsRoot workerScripts={workerScripts} />;
+      break;
+    }
+
+    case Page.Milestones: {
+      auxiliaryPage = <MilestonesRoot player={player} />;
+      break;
+    }
+    case Page.Tutorial: {
+      auxiliaryPage = (
+        <TutorialRoot
+          reactivateTutorial={() => {
+            prestigeAugmentation();
+            Router.toTerminal();
+            iTutorialStart();
+          }}
+        />
+      );
+      break;
+    }
+    case Page.DevMenu: {
+      auxiliaryPage = <DevMenuRoot player={player} engine={engine} router={Router} />;
+      break;
+    }
+
+    case Page.SplitScreen:
+    case Page.Hacknet:
+    case Page.CreateProgram:
+    case Page.Factions:
+    case Page.Faction:
+    case Page.Recovery:
+    case Page.BitVerse:
+    case Page.Infiltration:
+    case Page.BladeburnerCinematic:
+    case Page.Work:
+    case Page.Terminal:
+    case Page.Sleeves:
+    case Page.StaneksGift:
+    case Page.Gang:
+    case Page.Corporation:
+    case Page.Bladeburner:
+    case Page.Grafting:
+    case Page.Travel:
+    case Page.StockMarket:
+    case Page.City:
+    case Page.Job:
+    case Page.ImportSave:
+    case Page.Location: {
+      auxiliaryPage = <AuxiliaryPage />;
+      break;
+    }
+    case Page.Options: {
+      auxiliaryPage = (
+        <GameOptionsRoot
+          player={player}
+          router={Router}
+          save={() => saveObject.saveGame()}
+          export={() => {
+            // Apply the export bonus before saving the game
+            onExport(player);
+            saveObject.exportGame();
+          }}
+          forceKill={killAllScripts}
+          softReset={softReset}
+        />
+      );
+      break;
+    }
+    case Page.Augmentations: {
+      auxiliaryPage = (
+        <AugmentationsRoot
+          exportGameFn={() => {
+            // Apply the export bonus before saving the game
+            onExport(player);
+            saveObject.exportGame();
+          }}
+          installAugmentationsFn={() => {
+            installAugmentations();
+          }}
+        />
+      );
+      break;
+    }
+    case Page.Achievements: {
+      auxiliaryPage = <AchievementsRoot />;
+      break;
+    }
+    case Page.ThemeBrowser: {
+      auxiliaryPage = <ThemeBrowser router={Router} />;
+      break;
+    }
+  }
+
   return (
     <Context.Player.Provider value={player}>
       <Context.Router.Provider value={Router}>
@@ -525,11 +762,12 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
                   <InteractiveTutorialRoot />
                 )}
               </Overview>
-              {withSidebar ? (
-                <Box display="flex" flexDirection="row" width="100%">
+              <Box display="flex" flexDirection="row" width="100%">
+                {withSidebar ? (
                   <SidebarRoot
                     player={player}
                     router={Router}
+                    auxiliaryRouter={AuxiliaryRouter}
                     page={page}
                     opened={sidebarOpened}
                     onToggled={(isOpened) => {
@@ -537,11 +775,21 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
                       Settings.IsSidebarOpened = isOpened;
                     }}
                   />
-                  <Box className={classes.root}>{mainPage}</Box>
+                ) : (
+                  ""
+                )}
+
+                <Box className={classes.root} width="50%">
+                  {mainPage}
                 </Box>
-              ) : (
-                <Box className={classes.root}>{mainPage}</Box>
-              )}
+                {withSecondaryPage ? (
+                  <Box className={classes.root} width="50%">
+                    {auxiliaryPage}
+                  </Box>
+                ) : (
+                  ""
+                )}
+              </Box>
               <Unclickable />
               {withPopups && (
                 <>

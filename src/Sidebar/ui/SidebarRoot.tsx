@@ -104,6 +104,7 @@ const useStyles = makeStyles((theme: Theme) =>
 interface IProps {
   player: IPlayer;
   router: IRouter;
+  auxiliaryRouter: IRouter;
   page: Page;
   opened: boolean;
   onToggled: (newValue: boolean) => void;
@@ -164,97 +165,97 @@ export function SidebarRoot(props: IProps): React.ReactElement {
   const canBladeburner = !!(props.player.bladeburner as any);
   const canStaneksGift = props.player.augmentations.some((aug) => aug.name === AugmentationNames.StaneksGift1);
 
-  function clickTerminal(): void {
-    props.router.toTerminal();
+  function clickTerminal(router: IRouter): void {
+    router.toTerminal();
     if (flashTerminal) iTutorialNextStep();
   }
 
-  function clickScriptEditor(): void {
-    props.router.toScriptEditor();
+  function clickScriptEditor(router: IRouter): void {
+    router.toScriptEditor();
   }
 
-  function clickStats(): void {
-    props.router.toStats();
+  function clickStats(router: IRouter): void {
+    router.toStats();
     if (flashStats) iTutorialNextStep();
   }
 
-  function clickActiveScripts(): void {
-    props.router.toActiveScripts();
+  function clickActiveScripts(router: IRouter): void {
+    router.toActiveScripts();
     if (flashActiveScripts) iTutorialNextStep();
   }
 
-  function clickCreateProgram(): void {
-    props.router.toCreateProgram();
+  function clickCreateProgram(router: IRouter): void {
+    router.toCreateProgram();
   }
 
-  function clickStaneksGift(): void {
-    props.router.toStaneksGift();
+  function clickStaneksGift(router: IRouter): void {
+    router.toStaneksGift();
   }
 
-  function clickFactions(): void {
-    props.router.toFactions();
+  function clickFactions(router: IRouter): void {
+    router.toFactions();
   }
 
-  function clickAugmentations(): void {
-    props.router.toAugmentations();
+  function clickAugmentations(router: IRouter): void {
+    router.toAugmentations();
   }
 
-  function clickSleeves(): void {
-    props.router.toSleeves();
+  function clickSleeves(router: IRouter): void {
+    router.toSleeves();
   }
 
-  function clickHacknet(): void {
-    props.router.toHacknetNodes();
+  function clickHacknet(router: IRouter): void {
+    router.toHacknetNodes();
     if (flashHacknet) iTutorialNextStep();
   }
 
-  function clickCity(): void {
-    props.router.toCity();
+  function clickCity(router: IRouter): void {
+    router.toCity();
     if (flashCity) iTutorialNextStep();
   }
 
-  function clickTravel(): void {
-    props.router.toTravel();
+  function clickTravel(router: IRouter): void {
+    router.toTravel();
   }
 
-  function clickJob(): void {
-    props.router.toJob();
+  function clickJob(router: IRouter): void {
+    router.toJob();
   }
 
-  function clickStockMarket(): void {
-    props.router.toStockMarket();
+  function clickStockMarket(router: IRouter): void {
+    router.toStockMarket();
   }
 
-  function clickBladeburner(): void {
-    props.router.toBladeburner();
+  function clickBladeburner(router: IRouter): void {
+    router.toBladeburner();
   }
 
-  function clickCorp(): void {
-    props.router.toCorporation();
+  function clickCorp(router: IRouter): void {
+    router.toCorporation();
   }
 
-  function clickGang(): void {
-    props.router.toGang();
+  function clickGang(router: IRouter): void {
+    router.toGang();
   }
 
-  function clickTutorial(): void {
-    props.router.toTutorial();
+  function clickTutorial(router: IRouter): void {
+    router.toTutorial();
     if (flashTutorial) iTutorialNextStep();
   }
 
-  function clickMilestones(): void {
-    props.router.toMilestones();
+  function clickMilestones(router: IRouter): void {
+    router.toMilestones();
   }
-  function clickOptions(): void {
-    props.router.toGameOptions();
-  }
-
-  function clickDev(): void {
-    props.router.toDevMenu();
+  function clickOptions(router: IRouter): void {
+    router.toGameOptions();
   }
 
-  function clickAchievements(): void {
-    props.router.toAchievements();
+  function clickDev(router: IRouter): void {
+    router.toDevMenu();
+  }
+
+  function clickAchievements(router: IRouter): void {
+    router.toAchievements();
   }
 
   useEffect(() => {
@@ -275,52 +276,53 @@ export function SidebarRoot(props: IProps): React.ReactElement {
     function handleShortcuts(this: Document, event: KeyboardEvent): any {
       if (Settings.DisableHotkeys) return;
       if ((props.player.isWorking && props.player.focus) || props.router.page() === Page.BitVerse) return;
+      let router = ((!event.shiftKey) && true)? props.router : props.auxiliaryRouter;
       if (event.code === KEYCODE.T && event.altKey) {
         event.preventDefault();
-        clickTerminal();
+        clickTerminal(router);
       } else if (event.code === KEYCODE.C && event.altKey) {
         event.preventDefault();
-        clickStats();
+        clickStats(router);
       } else if (event.code === KEYCODE.E && event.altKey) {
         event.preventDefault();
-        clickScriptEditor();
+        clickScriptEditor(router);
       } else if (event.code === KEYCODE.S && event.altKey) {
         event.preventDefault();
-        clickActiveScripts();
+        clickActiveScripts(router);
       } else if (event.code === KEYCODE.H && event.altKey) {
         event.preventDefault();
-        clickHacknet();
+        clickHacknet(router);
       } else if (event.code === KEYCODE.W && event.altKey) {
         event.preventDefault();
-        clickCity();
+        clickCity(router);
       } else if (event.code === KEYCODE.J && event.altKey && !event.ctrlKey && !event.metaKey && canJob) {
         // ctrl/cmd + alt + j is shortcut to open Chrome dev tools
         event.preventDefault();
-        clickJob();
+        clickJob(router);
       } else if (event.code === KEYCODE.R && event.altKey) {
         event.preventDefault();
-        clickTravel();
+        clickTravel(router);
       } else if (event.code === KEYCODE.P && event.altKey) {
         event.preventDefault();
-        clickCreateProgram();
+        clickCreateProgram(router);
       } else if (event.code === KEYCODE.F && event.altKey) {
         if (props.page == Page.Terminal && Settings.EnableBashHotkeys) {
           return;
         }
         event.preventDefault();
-        clickFactions();
+        clickFactions(router);
       } else if (event.code === KEYCODE.A && event.altKey) {
         event.preventDefault();
-        clickAugmentations();
+        clickAugmentations(router);
       } else if (event.code === KEYCODE.U && event.altKey) {
         event.preventDefault();
-        clickTutorial();
+        clickTutorial(router);
       } else if (event.code === KEYCODE.B && event.altKey && props.player.bladeburner) {
         event.preventDefault();
-        clickBladeburner();
+        clickBladeburner(router);
       } else if (event.code === KEYCODE.G && event.altKey && props.player.gang) {
         event.preventDefault();
-        clickGang();
+        clickGang(router);
       }
     }
 
@@ -370,7 +372,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.Terminal,
               })}
-              onClick={clickTerminal}
+              onClick={(e) => clickTerminal((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Terminal" : ""}>
@@ -392,7 +394,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.ScriptEditor,
               })}
-              onClick={clickScriptEditor}
+              onClick={(e) => clickScriptEditor((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Script Editor" : ""}>
@@ -412,7 +414,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.ActiveScripts,
               })}
-              onClick={clickActiveScripts}
+              onClick={(e) => clickActiveScripts((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Active Scripts" : ""}>
@@ -435,7 +437,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.CreateProgram,
               })}
-              onClick={clickCreateProgram}
+              onClick={(e) => clickCreateProgram((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Badge badgeContent={programCount > 0 ? programCount : undefined} color="error">
@@ -457,7 +459,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
                 className={clsx({
                   [classes.active]: props.page === Page.StaneksGift,
                 })}
-                onClick={clickStaneksGift}
+                onClick={(e) => clickStaneksGift((!e.shiftKey)?props.router:props.auxiliaryRouter)}
               >
                 <ListItemIcon>
                   <Tooltip title={!open ? "Stanek's Gift" : ""}>
@@ -491,7 +493,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
             className={clsx({
               [classes.active]: props.page === Page.Stats,
             })}
-            onClick={clickStats}
+            onClick={(e) => clickStats((!e.shiftKey)?props.router:props.auxiliaryRouter)}
           >
             <ListItemIcon>
               <Tooltip title={!open ? "Stats" : ""}>
@@ -512,7 +514,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: [Page.Factions, Page.Faction].includes(props.page),
               })}
-              onClick={clickFactions}
+              onClick={(e) => clickFactions((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Badge badgeContent={invitationsCount !== 0 ? invitationsCount : undefined} color="error">
@@ -538,7 +540,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.Augmentations,
               })}
-              onClick={clickAugmentations}
+              onClick={(e) => clickAugmentations((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Badge badgeContent={augmentationCount !== 0 ? augmentationCount : undefined} color="error">
@@ -563,7 +565,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
             className={clsx({
               [classes.active]: props.page === Page.Hacknet,
             })}
-            onClick={clickHacknet}
+            onClick={(e) => clickHacknet((!e.shiftKey)?props.router:props.auxiliaryRouter)}
           >
             <ListItemIcon>
               <Tooltip title={!open ? "Hacknet" : ""}>
@@ -586,7 +588,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.Sleeves,
               })}
-              onClick={clickSleeves}
+              onClick={(e) => clickSleeves((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Sleeves" : ""}>
@@ -618,7 +620,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               [classes.active]:
                 props.page === Page.City || props.page === Page.Grafting || props.page === Page.Location,
             })}
-            onClick={clickCity}
+            onClick={(e) => clickCity((!e.shiftKey)?props.router:props.auxiliaryRouter)}
           >
             <ListItemIcon>
               <Tooltip title={!open ? "City" : ""}>
@@ -637,7 +639,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
             className={clsx({
               [classes.active]: props.page === Page.Travel,
             })}
-            onClick={clickTravel}
+            onClick={(e) => clickTravel((!e.shiftKey)?props.router:props.auxiliaryRouter)}
           >
             <ListItemIcon>
               <Tooltip title={!open ? "Travel" : ""}>
@@ -656,7 +658,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.Job,
               })}
-              onClick={clickJob}
+              onClick={(e) => clickJob((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Job" : ""}>
@@ -676,7 +678,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.StockMarket,
               })}
-              onClick={clickStockMarket}
+              onClick={(e) => clickStockMarket((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Stock Market" : ""}>
@@ -696,7 +698,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.Bladeburner,
               })}
-              onClick={clickBladeburner}
+              onClick={(e) => clickBladeburner((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Bladeburner" : ""}>
@@ -716,7 +718,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.Corporation,
               })}
-              onClick={clickCorp}
+              onClick={(e) => clickCorp((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Corp" : ""}>
@@ -736,7 +738,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.Gang,
               })}
-              onClick={clickGang}
+              onClick={(e) => clickGang((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Gang" : ""}>
@@ -767,7 +769,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
             className={clsx({
               [classes.active]: props.page === Page.Milestones,
             })}
-            onClick={clickMilestones}
+            onClick={(e) => clickMilestones((!e.shiftKey)?props.router:props.auxiliaryRouter)}
           >
             <ListItemIcon>
               <Tooltip title={!open ? "Milestones" : ""}>
@@ -784,7 +786,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
             className={clsx({
               [classes.active]: props.page === Page.Tutorial,
             })}
-            onClick={clickTutorial}
+            onClick={(e) => clickTutorial((!e.shiftKey)?props.router:props.auxiliaryRouter)}
           >
             <ListItemIcon>
               <Tooltip title={!open ? "Tutorial" : ""}>
@@ -803,7 +805,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
             className={clsx({
               [classes.active]: props.page === Page.Achievements,
             })}
-            onClick={clickAchievements}
+            onClick={(e) => clickAchievements((!e.shiftKey)?props.router:props.auxiliaryRouter)}
           >
             <ListItemIcon>
               <Tooltip title={!open ? "Achievements" : ""}>
@@ -820,7 +822,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
             className={clsx({
               [classes.active]: props.page === Page.Options,
             })}
-            onClick={clickOptions}
+            onClick={(e) => clickOptions((!e.shiftKey)?props.router:props.auxiliaryRouter)}
           >
             <ListItemIcon>
               <Tooltip title={!open ? "Options" : ""}>
@@ -839,7 +841,7 @@ export function SidebarRoot(props: IProps): React.ReactElement {
               className={clsx({
                 [classes.active]: props.page === Page.DevMenu,
               })}
-              onClick={clickDev}
+              onClick={(e) => clickDev((!e.shiftKey)?props.router:props.auxiliaryRouter)}
             >
               <ListItemIcon>
                 <Tooltip title={!open ? "Dev" : ""}>

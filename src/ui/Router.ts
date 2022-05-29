@@ -39,6 +39,7 @@ export enum Page {
   Achievements,
   ThemeBrowser,
   ImportSave,
+  SplitScreen,
 }
 
 export interface ScriptEditorRouteOptions {

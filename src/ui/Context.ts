@@ -5,9 +5,11 @@ import { IRouter } from "./Router";
 export const Context: {
   Player: React.Context<IPlayer>;
   Router: React.Context<IRouter>;
+  SlaveRouter: React.Context<IRouter>;
 } = {
   Player: React.createContext<IPlayer>({} as IPlayer),
   Router: React.createContext<IRouter>({} as IRouter),
+  SlaveRouter: React.createContext<IRouter>({} as IRouter),
 };
 
 export const use: {

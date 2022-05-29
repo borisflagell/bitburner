@@ -234,7 +234,7 @@ export function CharacterStats(): React.ReactElement {
   }
 
   return (
-    <Container maxWidth="lg" disableGutters sx={{ mx: 0 }}>
+    <Container maxWidth="lg">
       <Typography variant="h4">Stats</Typography>
       <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", minWidth: "fit-content", mb: 1, gap: 1 }}>
         <Paper sx={{ p: 1 }}>
